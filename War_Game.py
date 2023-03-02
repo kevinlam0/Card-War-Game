@@ -69,8 +69,12 @@ class Player:
     # -- Removes 2 cards that will stay faced down when there is war -- 
     def remove_war_cards(self):
         war_cards = []
-        for i in range(2):
-            war_cards.append(self.hand.remove_card())
+        if len(self.hand.cards) < 3:
+            for i in range(len(self.hand.cards)):
+                war_cards.append(self.hand.remove_card())
+        else:
+            for i in range(3):
+                war_cards.append(self.hand.remove_card())
         return war_cards
     
     # -- Returns boolean of still having cards or not -- 
@@ -124,25 +128,37 @@ while user.still_has_cards() and comp.still_has_cards():
     
 
     # -- If the card played is the same ranking, there is war if and only if both players have enough cards for war -- 
-    if pcard[1] == ccard[1] and len(user.hand.cards) >= 3 and len(comp.hand.cards) >= 3:
+    if pcard[1] == ccard[1]: # and len(user.hand.cards) >= 3 and len(comp.hand.cards) >= 3:
         war_count += 1
         print("There is war")
 
-        # Add two cards from each hand to the table stack 
-        table_stack.extend(user.remove_war_cards())
-        table_stack.extend(comp.remove_war_cards())
+        # -- Add two cards from each hand to the table stack --
+        # table_stack.extend(user.remove_war_cards())
+        # table_stack.extend(comp.remove_war_cards())
 
-        # Card that will be compared during war 
-        cwar_cards = comp.play_card()
-        pwar_cards = user.play_card()
+        # -- Cards that will be compared during war --
+        # If either have 0 cards left after player their initial card then make that inital card their war card 
+        if len(user.hand.cards) == 0:
+            pwar_cards = [pcard]
+            cwar_cards = comp.remove_war_cards()
+        elif len(comp.hand.cards) == 0:
+            cwar_cards = [ccard]
+            pwar_cards = user.remove_war_cards()
+        else:
+            cwar_cards = comp.remove_war_cards()
+            pwar_cards = user.remove_war_cards()
+        
+        # print(cwar_cards)
+        # print(pwar_cards)
 
         # Add those cards to the table stack 
-        table_stack.append(cwar_cards)
-        table_stack.append(pwar_cards)
+        table_stack.extend(cwar_cards)
+        table_stack.extend(pwar_cards)
 
         # -- If index of the player's card's rank is higher, the player wins and takes the cards on the table. --
         # Refer to the RANKS list to see the rankings
-        if RANKS.index(pwar_cards[1]) > RANKS.index(cwar_cards[1]):
+        # Compares the last card in their list of war cards that should be at most 3
+        if RANKS.index(pwar_cards[-1][1]) > RANKS.index(cwar_cards[-1][1]):
             user.hand.add(table_stack)
         
         # If the computer's cards have a higher rank or if they both have the same rank, the computer wins
