@@ -1,8 +1,8 @@
 # Card Game of War
 
 ## Description
-  - Develops the card game of War between user and a computer. 
-  - Incorporates levels of objects within the User object and Computer object.
+  - Developed the card game of War between user and a computer. 
+  - Incorporated levels of objects within the User object and Computer object.
   - Auto-runs the game
   - Displays how many rounds it takes to end the game and who won each round
 
